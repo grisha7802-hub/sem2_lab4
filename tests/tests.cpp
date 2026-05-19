@@ -30,6 +30,13 @@ int main(){
     int b[2]={2,9}; Stack<int> patt(b,2); chk("find sub", c.FindSubStack(patt)==1);
     chk("substack", c.GetSubStack(1,3).GetSize()==3);
 
+    bool ex1=false; try{ Stack<int> e; e.Pop(); }catch(...){ ex1=true; }
+    chk("exception pop empty", ex1);
+    bool ex2=false; try{ Stack<int> e; e.Peek(); }catch(...){ ex2=true; }
+    chk("exception peek empty", ex2);
+    bool ex3=false; try{ Stack<int> e; e.Push(1); e.GetSubStack(2,1);}catch(...){ ex3=true; }
+    chk("exception bad substack", ex3);
+
     std::cout<<"Passed="<<passed<<" Failed="<<failed<<"\n";
     return failed==0?0:1;
 }

@@ -17,4 +17,8 @@
 ## Сборка
 ```bash
 ./build.sh
+./build/lr3_tests
+./build/lr3_console
+./build/lr3_gtk
+./build/lr3_bench
 ```
