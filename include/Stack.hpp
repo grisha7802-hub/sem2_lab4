@@ -1,5 +1,6 @@
 #pragma once
 #include "ArraySequence.hpp"
+#include "Option.hpp"
 #include <stdexcept>
 
 template<class T>
@@ -26,6 +27,16 @@ public:
     const T& Peek() const {
         if (IsEmpty()) throw std::out_of_range("Stack is empty");
         return data.Get(data.GetSize() - 1);
+    }
+
+    Option<T> TryPop() {
+        if (IsEmpty()) return Option<T>::None();
+        return Option<T>::Some(Pop());
+    }
+
+    Option<T> TryPeek() const {
+        if (IsEmpty()) return Option<T>::None();
+        return Option<T>::Some(Peek());
     }
 
     Stack<T> Concat(const Stack<T>& other) const {
