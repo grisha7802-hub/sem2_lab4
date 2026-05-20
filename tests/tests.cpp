@@ -4,86 +4,117 @@
 #include <vector>
 #include "Stack.hpp"
 
-static bool IsEven(const int& x){ return x%2==0; }
-static int Square(const int& x){ return x*x; }
-static int Sum(const int& a, const int& b){ return a+b; }
+static bool IsEvenNumber(const int& value){ return value%2==0; }
+static int SquareNumber(const int& value){ return value*value; }
+static int SumTwoNumbers(const int& leftValue, const int& rightValue){ return leftValue+rightValue; }
 
-struct Stats { int passed=0; int failed=0; std::vector<std::string> failedCases; };
+struct TestStatistics { int passed=0; int failed=0; std::vector<std::string> failedCaseNames; };
 
 template<class T>
-static std::string StackToString(const Stack<T>& s){
-    std::ostringstream out; out << "[";
-    for(int i=0;i<s.GetSize();++i){ out << s.Raw().Get(i); if(i+1<s.GetSize()) out << ", "; }
-    out << "]";
-    return out.str();
+static std::string StackToString(const Stack<T>& stack){
+    std::ostringstream output;
+    output << "[";
+    for(int elementIndex=0; elementIndex<stack.GetSize(); ++elementIndex){
+        output << stack.Raw().Get(elementIndex);
+        if(elementIndex + 1 < stack.GetSize()) output << ", ";
+    }
+    output << "]";
+    return output.str();
 }
 
-static void Report(Stats& st, const std::string& name, const std::string& input, const std::string& expected, const std::string& actual, bool ok){
-    std::cout << (ok ? "[PASS] " : "[FAIL] ") << name << "\n"
-              << "  Input:    " << input << "\n"
-              << "  Expected: " << expected << "\n"
-              << "  Actual:   " << actual << "\n\n";
-    if(ok) st.passed++; else { st.failed++; st.failedCases.push_back(name); }
+static void Report(TestStatistics& statistics,
+                   const std::string& testName,
+                   const std::string& inputDescription,
+                   const std::string& expectedValue,
+                   const std::string& actualValue,
+                   bool isPassed){
+    std::cout << (isPassed ? "[PASS] " : "[FAIL] ") << testName << "\n"
+              << "  Input:    " << inputDescription << "\n"
+              << "  Expected: " << expectedValue << "\n"
+              << "  Actual:   " << actualValue << "\n\n";
+
+    if (isPassed) statistics.passed++;
+    else {
+        statistics.failed++;
+        statistics.failedCaseNames.push_back(testName);
+    }
 }
 
 int main(){
-    Stats st;
+    TestStatistics statistics;
 
-    // BLOCK 1: base stack ops
-    Stack<int> s; s.Push(1); s.Push(2); s.Push(3);
-    Report(st, "Push + GetSize", "Push 1,2,3", "size=3", "size="+std::to_string(s.GetSize()), s.GetSize()==3);
-    Report(st, "Peek", "Stack=[1,2,3]", "3", std::to_string(s.Peek()), s.Peek()==3);
-    int popped = s.Pop();
-    Report(st, "Pop", "Stack=[1,2,3]", "pop=3, size=2", "pop="+std::to_string(popped)+", size="+std::to_string(s.GetSize()), popped==3 && s.GetSize()==2);
+    Stack<int> integerStack;
+    integerStack.Push(1);
+    integerStack.Push(2);
+    integerStack.Push(3);
 
-    // BLOCK 2: try-semantics
-    auto tp = s.TryPeek();
-    Report(st, "TryPeek non-empty", "Stack=[1,2]", "Some(2)", tp.IsSome()?"Some("+std::to_string(tp.GetOr(0))+")":"None", tp.IsSome() && tp.GetOr(0)==2);
-    Stack<int> empty;
-    auto tpe = empty.TryPeek();
-    Report(st, "TryPeek empty", "Stack=[]", "None", tpe.IsSome()?"Some":"None", !tpe.IsSome());
-    auto tpopEmpty = empty.TryPop();
-    Report(st, "TryPop empty", "Stack=[]", "None", tpopEmpty.IsSome()?"Some":"None", !tpopEmpty.IsSome());
+    Report(statistics, "Push + GetSize", "Push 1,2,3", "size=3", "size="+std::to_string(integerStack.GetSize()), integerStack.GetSize()==3);
+    Report(statistics, "Peek", "Stack=[1,2,3]", "3", std::to_string(integerStack.Peek()), integerStack.Peek()==3);
 
-    // BLOCK 3: map/where/reduce
-    auto mapped = s.Map<int>(Square);
-    Report(st, "Map square", "[1,2]", "[1,4]", StackToString(mapped), mapped.GetSize()==2 && mapped.Raw().Get(0)==1 && mapped.Raw().Get(1)==4);
-    auto filtered = s.Where(IsEven);
-    Report(st, "Where even", "[1,2]", "[2]", StackToString(filtered), filtered.GetSize()==1 && filtered.Raw().Get(0)==2);
-    int reduced = s.Reduce(Sum, 0);
-    Report(st, "Reduce sum", "[1,2], start=0", "3", std::to_string(reduced), reduced==3);
+    int poppedValue = integerStack.Pop();
+    Report(statistics, "Pop", "Pop from [1,2,3]", "pop=3, size=2", "pop="+std::to_string(poppedValue)+", size="+std::to_string(integerStack.GetSize()), poppedValue==3 && integerStack.GetSize()==2);
 
-    // BLOCK 4: concat/substack/find
-    int arr[2]={9,10}; Stack<int> s2(arr,2);
-    auto concat = s.Concat(s2);
-    Report(st, "Concat", "[1,2] + [9,10]", "[1,2,9,10]", StackToString(concat), concat.GetSize()==4 && concat.Raw().Get(2)==9 && concat.Raw().Get(3)==10);
-    auto sub = concat.GetSubStack(1,3);
-    Report(st, "GetSubStack", "[1,2,9,10], 1..3", "[2,9,10]", StackToString(sub), sub.GetSize()==3 && sub.Raw().Get(0)==2 && sub.Raw().Get(2)==10);
-    int patArr[2]={2,9}; Stack<int> pattern(patArr,2);
-    int pos = concat.FindSubStack(pattern);
-    Report(st, "FindSubStack", "find [2,9] in [1,2,9,10]", "1", std::to_string(pos), pos==1);
+    auto tryPeekResult = integerStack.TryPeek();
+    Report(statistics, "TryPeek non-empty", "Stack=[1,2]", "Some(2)", tryPeekResult.IsSome()?"Some("+std::to_string(tryPeekResult.GetOr(0))+")":"None", tryPeekResult.IsSome() && tryPeekResult.GetOr(0)==2);
 
-    // BLOCK 5: template coverage (double/string)
-    Stack<double> sd; sd.Push(1.5); sd.Push(2.5);
-    Report(st, "Template double", "Push 1.5,2.5", "size=2", "size="+std::to_string(sd.GetSize()), sd.GetSize()==2);
-    Stack<std::string> ss; ss.Push("a"); ss.Push("b");
-    Report(st, "Template string", "Push a,b then Peek", "b", ss.Peek(), ss.Peek()=="b");
+    Stack<int> emptyStack;
+    auto tryPeekEmptyResult = emptyStack.TryPeek();
+    Report(statistics, "TryPeek empty", "Stack=[]", "None", tryPeekEmptyResult.IsSome()?"Some":"None", !tryPeekEmptyResult.IsSome());
 
-    // BLOCK 6: negative exception tests
-    bool exPop=false; try{ Stack<int> x; x.Pop(); }catch(...){ exPop=true; }
-    Report(st, "Exception Pop empty", "Pop on []", "exception", exPop?"exception":"no exception", exPop);
-    bool exPeek=false; try{ Stack<int> x; x.Peek(); }catch(...){ exPeek=true; }
-    Report(st, "Exception Peek empty", "Peek on []", "exception", exPeek?"exception":"no exception", exPeek);
-    bool exSub=false; try{ Stack<int> x; x.Push(1); x.GetSubStack(3,1); }catch(...){ exSub=true; }
-    Report(st, "Exception bad substack", "GetSubStack(3,1) on [1]", "exception", exSub?"exception":"no exception", exSub);
+    auto tryPopEmptyResult = emptyStack.TryPop();
+    Report(statistics, "TryPop empty", "Stack=[]", "None", tryPopEmptyResult.IsSome()?"Some":"None", !tryPopEmptyResult.IsSome());
+
+    auto mappedStack = integerStack.Map<int>(SquareNumber);
+    Report(statistics, "Map square", "[1,2]", "[1, 4]", StackToString(mappedStack), mappedStack.GetSize()==2 && mappedStack.Raw().Get(0)==1 && mappedStack.Raw().Get(1)==4);
+
+    auto filteredStack = integerStack.Where(IsEvenNumber);
+    Report(statistics, "Where even", "[1,2]", "[2]", StackToString(filteredStack), filteredStack.GetSize()==1 && filteredStack.Raw().Get(0)==2);
+
+    int reducedSum = integerStack.Reduce(SumTwoNumbers, 0);
+    Report(statistics, "Reduce sum", "[1,2], start=0", "3", std::to_string(reducedSum), reducedSum==3);
+
+    int suffixValues[2] = {9,10};
+    Stack<int> suffixStack(suffixValues,2);
+    auto concatenatedStack = integerStack.Concat(suffixStack);
+    Report(statistics, "Concat", "[1,2] + [9,10]", "[1, 2, 9, 10]", StackToString(concatenatedStack), concatenatedStack.GetSize()==4 && concatenatedStack.Raw().Get(2)==9 && concatenatedStack.Raw().Get(3)==10);
+
+    auto extractedSubstack = concatenatedStack.GetSubStack(1,3);
+    Report(statistics, "GetSubStack", "[1,2,9,10], 1..3", "[2, 9, 10]", StackToString(extractedSubstack), extractedSubstack.GetSize()==3 && extractedSubstack.Raw().Get(0)==2 && extractedSubstack.Raw().Get(2)==10);
+
+    int patternValues[2] = {2,9};
+    Stack<int> patternStack(patternValues,2);
+    int foundPosition = concatenatedStack.FindSubStack(patternStack);
+    Report(statistics, "FindSubStack", "Find [2,9] in [1,2,9,10]", "1", std::to_string(foundPosition), foundPosition==1);
+
+    Stack<double> doubleStack;
+    doubleStack.Push(1.5);
+    doubleStack.Push(2.5);
+    Report(statistics, "Template double", "Push 1.5,2.5", "size=2", "size="+std::to_string(doubleStack.GetSize()), doubleStack.GetSize()==2);
+
+    Stack<std::string> stringStack;
+    stringStack.Push("a");
+    stringStack.Push("b");
+    Report(statistics, "Template string", "Push a,b then Peek", "b", stringStack.Peek(), stringStack.Peek()=="b");
+
+    bool popExceptionThrown=false;
+    try { Stack<int> localEmpty; localEmpty.Pop(); } catch (...) { popExceptionThrown=true; }
+    Report(statistics, "Exception Pop empty", "Pop on []", "exception", popExceptionThrown?"exception":"no exception", popExceptionThrown);
+
+    bool peekExceptionThrown=false;
+    try { Stack<int> localEmpty; localEmpty.Peek(); } catch (...) { peekExceptionThrown=true; }
+    Report(statistics, "Exception Peek empty", "Peek on []", "exception", peekExceptionThrown?"exception":"no exception", peekExceptionThrown);
+
+    bool subStackExceptionThrown=false;
+    try { Stack<int> localStack; localStack.Push(1); localStack.GetSubStack(3,1); } catch (...) { subStackExceptionThrown=true; }
+    Report(statistics, "Exception bad substack", "GetSubStack(3,1) on [1]", "exception", subStackExceptionThrown?"exception":"no exception", subStackExceptionThrown);
 
     std::cout << "===== TEST SUMMARY =====\n";
-    std::cout << "Passed: " << st.passed << "\n";
-    std::cout << "Failed: " << st.failed << "\n";
-    if(!st.failedCases.empty()){
+    std::cout << "Passed: " << statistics.passed << "\n";
+    std::cout << "Failed: " << statistics.failed << "\n";
+    if(!statistics.failedCaseNames.empty()){
         std::cout << "Failed cases:\n";
-        for(const auto& c : st.failedCases) std::cout << " - " << c << "\n";
+        for(const auto& failedCase : statistics.failedCaseNames) std::cout << " - " << failedCase << "\n";
     }
 
-    return st.failed==0 ? 0 : 1;
+    return statistics.failed==0 ? 0 : 1;
 }
