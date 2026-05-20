@@ -16,10 +16,7 @@ public:
     T Dequeue() {
         if (IsEmpty()) throw std::out_of_range("Queue is empty");
         T first = storage.GetFirst();
-        // remove first by rebuild (linked list has no RemoveAt in this version)
-        LinkedList<T> rebuilt;
-        for (int i = 1; i < storage.GetSize(); ++i) rebuilt.Append(storage.Get(i));
-        storage = rebuilt;
+        storage.RemoveAt(0);
         return first;
     }
 

@@ -131,4 +131,26 @@ public:
     void Set(int index, const T& value) {
         GetNode(index)->value = value;
     }
+
+    void RemoveAt(int index) {
+        if (index < 0 || index >= size) throw std::out_of_range("IndexOutOfRange");
+
+        if (index == 0) {
+            Node* oldHead = head;
+            head = head->next;
+            delete oldHead;
+            --size;
+            if (size == 0) tail = nullptr;
+            return;
+        }
+
+        Node* previous = GetNode(index - 1);
+        Node* current = previous->next;
+        previous->next = current->next;
+        if (current == tail) {
+            tail = previous;
+        }
+        delete current;
+        --size;
+    }
 };
