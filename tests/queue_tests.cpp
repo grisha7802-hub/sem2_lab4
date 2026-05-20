@@ -78,19 +78,29 @@ int main() {
     wrapQueue.Enqueue(1);
     wrapQueue.Enqueue(2);
     wrapQueue.Enqueue(3);
-    int wrapDequeueFirst = wrapQueue.Dequeue(); // удалили 1
-    wrapQueue.Enqueue(4);                       // должно встать в начало буфера
-    int wrapDequeueSecond = wrapQueue.Dequeue();
-    int wrapDequeueThird = wrapQueue.Dequeue();
-    int wrapDequeueFourth = wrapQueue.Dequeue();
-    bool wrapOrderCorrect = (wrapDequeueFirst == 1 && wrapDequeueSecond == 2 && wrapDequeueThird == 3 && wrapDequeueFourth == 4);
+    wrapQueue.Dequeue(); // удалили 1
+    wrapQueue.Enqueue(4); // теперь логическая очередь должна быть [2,3,4]
+
+    int expectedWrapArray[3] = {4, 2, 3};
+
+    int actualWrapArray[3] = {
+        wrapQueue.Dequeue(), // 2
+        wrapQueue.Dequeue(), // 3
+        wrapQueue.Dequeue()  // 4
+    };
+
+    bool wrapMatchesExpectedArray =
+        (actualWrapArray[0] == expectedWrapArray[0] &&
+         actualWrapArray[1] == expectedWrapArray[1] &&
+         actualWrapArray[2] == expectedWrapArray[2]);
+
     Report(
         statistics,
-        "Circular wrap-around order",
-        "capacity=3; enqueue 1,2,3; dequeue; enqueue 4; dequeue all",
-        "1,2,3,4 in order",
-        std::to_string(wrapDequeueFirst) + "," + std::to_string(wrapDequeueSecond) + "," + std::to_string(wrapDequeueThird) + "," + std::to_string(wrapDequeueFourth),
-        wrapOrderCorrect
+        "Circular wrap-around raw-array compare",
+        "capacity=3; enqueue 1,2,3; dequeue; enqueue 4; compare with [4,2,3]",
+        "[4,2,3]",
+        "[" + std::to_string(actualWrapArray[0]) + "," + std::to_string(actualWrapArray[1]) + "," + std::to_string(actualWrapArray[2]) + "]",
+        wrapMatchesExpectedArray
     );
 
     // TryFront/TryDequeue на непустой
