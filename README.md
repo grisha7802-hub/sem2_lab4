@@ -86,6 +86,8 @@
 ./build/lr3_console
 ./build/lr3_gtk
 ./build/lr3_bench
+./build/lr3_queue_tests
+./build/lr3_queue_bench
 ```
 
 ## Структура проекта

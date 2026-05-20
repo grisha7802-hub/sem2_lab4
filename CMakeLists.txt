@@ -11,14 +11,20 @@ add_library(lr3_core
 
 target_include_directories(lr3_core PUBLIC include)
 
-add_executable(lr3_console src/main.cpp)
+add_executable(lr3_console src/main.cpp src/console_runner.cpp)
 target_link_libraries(lr3_console PRIVATE lr3_core)
 
 add_executable(lr3_tests tests/tests.cpp)
 target_link_libraries(lr3_tests PRIVATE lr3_core)
 
+add_executable(lr3_queue_tests tests/queue_tests.cpp)
+target_link_libraries(lr3_queue_tests PRIVATE lr3_core)
+
 add_executable(lr3_bench src/benchmark.cpp)
 target_link_libraries(lr3_bench PRIVATE lr3_core)
+
+add_executable(lr3_queue_bench src/queue_benchmark.cpp)
+target_link_libraries(lr3_queue_bench PRIVATE lr3_core)
 
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
