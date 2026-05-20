@@ -34,7 +34,6 @@ static void Report(
 int main() {
     TestStatistics statistics;
 
-    // ---------------- ArrayQueue базовые ----------------
     ArrayQueue<int> arrayQueue;
     arrayQueue.Enqueue(1);
     arrayQueue.Enqueue(2);
@@ -50,7 +49,6 @@ int main() {
     }
     Report(statistics, "ArrayQueue empty Dequeue", "Dequeue on []", "exception", arrayEmptyDequeueException ? "exception" : "no exception", arrayEmptyDequeueException);
 
-    // ---------------- ListQueue базовые ----------------
     ListQueue<int> listQueue;
     listQueue.Enqueue(7);
     listQueue.Enqueue(8);
@@ -60,7 +58,6 @@ int main() {
     auto listTryFrontEmpty = ListQueue<int>().TryFront();
     Report(statistics, "ListQueue TryFront empty", "[]", "None", listTryFrontEmpty.IsSome() ? "Some" : "None", !listTryFrontEmpty.IsSome());
 
-    // ---------------- CircularBufferQueue: позитивные сценарии ----------------
     CircularBufferQueue<int> circularQueue(3);
     circularQueue.Enqueue(10);
     circularQueue.Enqueue(11);
@@ -117,7 +114,6 @@ int main() {
     Report(statistics, "Circular TryFront None", "[]", "None", tryFrontNone.IsSome() ? "Some" : "None", !tryFrontNone.IsSome());
     Report(statistics, "Circular TryDequeue None", "[]", "None", tryDequeueNone.IsSome() ? "Some" : "None", !tryDequeueNone.IsSome());
 
-    // ---------------- CircularBufferQueue: исключения ----------------
     bool emptyFrontException = false;
     try {
         CircularBufferQueue<int> queue(2);
@@ -155,7 +151,6 @@ int main() {
     }
     Report(statistics, "Circular bad capacity", "capacity=0", "exception", badCapacityException ? "exception" : "no exception", badCapacityException);
 
-    // ---------------- Summary ----------------
     std::cout << "===== QUEUE TEST SUMMARY =====\n";
     std::cout << "Passed: " << statistics.passed << "\n";
     std::cout << "Failed: " << statistics.failed << "\n";
