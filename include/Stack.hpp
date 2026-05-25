@@ -117,20 +117,16 @@ public:
 
     template<class U>
     Stack<U> Map(U (*mapper)(const T&)) const {
-        Stack<U> result;
-        for (int i = 0; i < GetSize(); ++i) {
-            result.Push(mapper(data->Get(i)));
-        }
+        Sequence<U>* mapped = new ArraySequence<U>();
+        data->MapTo(*mapped, mapper);
+        Stack<U> result(mapped);
         return result;
     }
 
     Stack<T> Where(bool (*predicate)(const T&)) const {
-        Stack<T> result(data->CreateEmpty());
-        for (int i = 0; i < GetSize(); ++i) {
-            if (predicate(data->Get(i))) {
-                result.Push(data->Get(i));
-            }
-        }
+        Sequence<T>* filtered = data->CreateEmpty();
+        data->WhereTo(*filtered, predicate);
+        Stack<T> result(filtered);
         return result;
     }
 
