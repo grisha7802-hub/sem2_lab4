@@ -10,6 +10,9 @@ public:
     BitSequence() : bits() {}
     BitSequence(const Bit* items, int count) : bits(items, count) {}
 
+    Sequence<Bit>* Clone() const override { return new BitSequence(*this); }
+    Sequence<Bit>* CreateEmpty() const override { return new BitSequence(); }
+
     int GetSize() const override { return bits.GetSize(); }
     const Bit& Get(int index) const override { return bits.Get(index); }
     Bit& Get(int index) override { return bits.Get(index); }

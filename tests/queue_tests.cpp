@@ -78,7 +78,7 @@ int main() {
     wrapQueue.Dequeue(); // удалили 1
     wrapQueue.Enqueue(4); // теперь логическая очередь должна быть [2,3,4]
 
-    int expectedWrapArray[3] = {4, 2, 3};
+    int expectedWrapArray[3] = {2, 3, 4};
 
     int actualWrapArray[3] = {
         wrapQueue.Dequeue(), // 2
@@ -94,8 +94,8 @@ int main() {
     Report(
         statistics,
         "Circular wrap-around raw-array compare",
-        "capacity=3; enqueue 1,2,3; dequeue; enqueue 4; compare with [4,2,3]",
-        "[4,2,3]",
+        "capacity=3; enqueue 1,2,3; dequeue; enqueue 4; compare with [2,3,4]",
+        "[2,3,4]",
         "[" + std::to_string(actualWrapArray[0]) + "," + std::to_string(actualWrapArray[1]) + "," + std::to_string(actualWrapArray[2]) + "]",
         wrapMatchesExpectedArray
     );

@@ -32,6 +32,9 @@ public:
         length = count;
     }
 
+    Sequence<T>* Clone() const override { return new ArraySequence<T>(*this); }
+    Sequence<T>* CreateEmpty() const override { return new ArraySequence<T>(); }
+
     int GetSize() const override { return length; }
 
     const T& Get(int index) const override {

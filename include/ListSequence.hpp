@@ -11,6 +11,9 @@ public:
     ListSequence() : storage() {}
     ListSequence(const T* items, int count) : storage(items, count) {}
 
+    Sequence<T>* Clone() const override { return new ListSequence<T>(*this); }
+    Sequence<T>* CreateEmpty() const override { return new ListSequence<T>(); }
+
     int GetSize() const override { return storage.GetSize(); }
 
     const T& Get(int index) const override { return storage.Get(index); }

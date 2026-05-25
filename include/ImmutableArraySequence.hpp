@@ -10,6 +10,9 @@ public:
     ImmutableArraySequence() : data() {}
     ImmutableArraySequence(const T* items, int count) : data(items, count) {}
 
+    Sequence<T>* Clone() const override { return new ImmutableArraySequence<T>(*this); }
+    Sequence<T>* CreateEmpty() const override { return new ImmutableArraySequence<T>(); }
+
     int GetSize() const override { return data.GetSize(); }
     const T& Get(int index) const override { return data.Get(index); }
     T& Get(int index) override { return data.Get(index); }
