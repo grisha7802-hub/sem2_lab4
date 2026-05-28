@@ -26,6 +26,12 @@ target_link_libraries(lr3_bench PRIVATE lr3_core)
 add_executable(lr3_queue_bench src/queue_benchmark.cpp)
 target_link_libraries(lr3_queue_bench PRIVATE lr3_core)
 
+add_executable(lr4_console src/lr4_main.cpp src/lr4_console.cpp)
+target_link_libraries(lr4_console PRIVATE lr3_core)
+
+add_executable(lr4_tests tests/lr4_tests.cpp)
+target_link_libraries(lr4_tests PRIVATE lr3_core)
+
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(GTK3 gtk+-3.0)
