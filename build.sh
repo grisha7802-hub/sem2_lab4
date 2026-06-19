@@ -6,4 +6,4 @@ if [ ! -x "$CMAKE_BIN" ]; then
 fi
 "$CMAKE_BIN" -S . -B build
 "$CMAKE_BIN" --build build -j2
-./build/lr3_tests
+./build/lr4_tests

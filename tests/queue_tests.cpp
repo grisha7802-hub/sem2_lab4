@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include "ArraySequence.hpp"
 #include "ArrayQueue.hpp"
 #include "ListQueue.hpp"
 #include "CircularBufferQueue.hpp"
@@ -8,7 +8,7 @@
 struct TestStatistics {
     int passed = 0;
     int failed = 0;
-    std::vector<std::string> failedCaseNames;
+    ArraySequence<std::string> failedCaseNames;
 };
 
 static void Report(
@@ -27,7 +27,7 @@ static void Report(
     if (isPassed) statistics.passed++;
     else {
         statistics.failed++;
-        statistics.failedCaseNames.push_back(testName);
+        statistics.failedCaseNames.Append(testName);
     }
 }
 
@@ -155,10 +155,10 @@ int main() {
     std::cout << "Passed: " << statistics.passed << "\n";
     std::cout << "Failed: " << statistics.failed << "\n";
 
-    if (!statistics.failedCaseNames.empty()) {
+    if (statistics.failedCaseNames.GetSize() > 0) {
         std::cout << "Failed cases:\n";
-        for (const auto& failedCaseName : statistics.failedCaseNames) {
-            std::cout << " - " << failedCaseName << "\n";
+        for (int index = 0; index < statistics.failedCaseNames.GetSize(); ++index) {
+            std::cout << " - " << statistics.failedCaseNames.Get(index) << "\n";
         }
     }
 

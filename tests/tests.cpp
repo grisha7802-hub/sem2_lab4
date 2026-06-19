@@ -1,14 +1,14 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
+#include "ArraySequence.hpp"
 #include "Stack.hpp"
 
 static bool IsEvenNumber(const int& value){ return value%2==0; }
 static int SquareNumber(const int& value){ return value*value; }
 static int SumTwoNumbers(const int& leftValue, const int& rightValue){ return leftValue+rightValue; }
 
-struct TestStatistics { int passed=0; int failed=0; std::vector<std::string> failedCaseNames; };
+struct TestStatistics { int passed=0; int failed=0; ArraySequence<std::string> failedCaseNames; };
 
 template<class T>
 static std::string StackToString(const Stack<T>& stack){
@@ -36,7 +36,7 @@ static void Report(TestStatistics& statistics,
     if (isPassed) statistics.passed++;
     else {
         statistics.failed++;
-        statistics.failedCaseNames.push_back(testName);
+        statistics.failedCaseNames.Append(testName);
     }
 }
 
@@ -111,9 +111,11 @@ int main(){
     std::cout << "===== TEST SUMMARY =====\n";
     std::cout << "Passed: " << statistics.passed << "\n";
     std::cout << "Failed: " << statistics.failed << "\n";
-    if(!statistics.failedCaseNames.empty()){
+    if(statistics.failedCaseNames.GetSize() > 0){
         std::cout << "Failed cases:\n";
-        for(const auto& failedCase : statistics.failedCaseNames) std::cout << " - " << failedCase << "\n";
+        for(int index = 0; index < statistics.failedCaseNames.GetSize(); ++index) {
+            std::cout << " - " << statistics.failedCaseNames.Get(index) << "\n";
+        }
     }
 
     return statistics.failed==0 ? 0 : 1;
