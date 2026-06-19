@@ -22,7 +22,7 @@ public:
         }
     }
 
-    explicit DynamicArray(int newSize) : buffer(nullptr), size(0) {
+    DynamicArray(int newSize) : buffer(nullptr), size(0) {
         if (newSize < 0) throw std::invalid_argument("size < 0");
         size = newSize;
         buffer = (size > 0) ? new T[size] : nullptr;

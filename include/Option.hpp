@@ -9,7 +9,7 @@ private:
 
 public:
     Option() : hasValue(false), storedValue() {}
-    explicit Option(const T& value) : hasValue(true), storedValue(value) {}
+    Option(const T& value) : hasValue(true), storedValue(value) {}
 
     static Option<T> None() { return Option<T>(); }
     static Option<T> Some(const T& value) { return Option<T>(value); }

@@ -11,7 +11,7 @@ private:
 public:
     Stack() : data(new ArraySequence<T>()) {}
 
-    explicit Stack(Sequence<T>* sequenceImplementation) : data(sequenceImplementation) {
+    Stack(Sequence<T>* sequenceImplementation) : data(sequenceImplementation) {
         if (data == nullptr) {
             throw std::invalid_argument("sequenceImplementation is null");
         }

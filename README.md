@@ -106,7 +106,7 @@
 
 На базе ЛР3 добавлены:
 - `LazySequence<T>` с мемоизацией материализованных элементов
-- `Cardinal` (конечная/бесконечная мощность)
+- `SequenceLength` (конечная/бесконечная мощность)
 - `Generator<T>` для последовательного порождения элементов
 - семейство потоков:
   - `Stream<T>` (`Map`, `Where`, `Reduce`, `Take`, `Zip`)
@@ -162,7 +162,7 @@
 |---|---|
 | Использовать ранее реализованный `Sequence<T>` | `ArraySequence<T>`, `ListSequence<T>`, базовый интерфейс `Sequence<T>` |
 | Реализовать `LazySequence<T>` | `include/LazySequence.hpp` |
-| Поддержать конечные и бесконечные ленивые последовательности | `Cardinal`, recurrence-конструктор, тесты с натуральным рядом |
+| Поддержать конечные и бесконечные ленивые последовательности | `SequenceLength`, recurrence-конструктор, тесты с натуральным рядом |
 | Мемоизация материализованных элементов | `LazySequence::EnsureIndexMaterialized`, `GetMaterializedCount` |
 | Генератор элементов | `Generator<T>` и `LazySequence::CreateGenerator()` |
 | Операции `Append`, `Prepend`, `InsertAt` | `LazySequence<T>` для элементов и последовательностей |

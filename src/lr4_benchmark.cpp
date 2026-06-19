@@ -30,7 +30,7 @@ int main() {
         [](const Sequence<int>& prefix) {
             return prefix.GetSize();
         },
-        Cardinal::Infinity()
+        SequenceLength::Infinity()
     );
 
     long long lazySum = 0;

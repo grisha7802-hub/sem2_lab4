@@ -12,7 +12,7 @@ private:
     int tail;
     int length;
 public:
-    explicit CircularBufferQueue(int fixedCapacity = 128): buffer(fixedCapacity), capacity(fixedCapacity), head(0), tail(0), length(0) {
+    CircularBufferQueue(int fixedCapacity = 128): buffer(fixedCapacity), capacity(fixedCapacity), head(0), tail(0), length(0) {
         if (capacity <= 0) throw std::invalid_argument("capacity must be > 0");
     }
     CircularBufferQueue(const CircularBufferQueue& other) = default;

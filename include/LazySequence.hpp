@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ArraySequence.hpp"
-#include "Cardinal.hpp"
+#include "SequenceLength.hpp"
 #include "Option.hpp"
 #include "Sequence.hpp"
 
@@ -44,7 +44,7 @@ public:
 template<class T>
 class LazySequence {
 private:
-    Cardinal length;
+    SequenceLength length;
     ArraySequence<T> materialized;
     std::function<T(std::size_t, const Sequence<T>&)> generator;
 
@@ -67,21 +67,21 @@ public:
 
     LazySequence(const T* items, int count) : length(0), materialized(items, count), generator(nullptr) {
         if (count < 0) throw std::invalid_argument("count < 0");
-        length = Cardinal(static_cast<std::size_t>(materialized.GetSize()));
+        length = SequenceLength(static_cast<std::size_t>(materialized.GetSize()));
     }
 
-    explicit LazySequence(const Sequence<T>& seq) : length(0), materialized(), generator(nullptr) {
+    LazySequence(const Sequence<T>& seq) : length(0), materialized(), generator(nullptr) {
         for (int i = 0; i < seq.GetSize(); ++i) {
             materialized.Append(seq.Get(i));
         }
-        length = Cardinal(static_cast<std::size_t>(materialized.GetSize()));
+        length = SequenceLength(static_cast<std::size_t>(materialized.GetSize()));
     }
 
-    explicit LazySequence(Sequence<T>* seq) : LazySequence(RequireSequence(seq)) {}
+    LazySequence(Sequence<T>* seq) : LazySequence(RequireSequence(seq)) {}
 
     LazySequence(const Sequence<T>& seed,
                  std::function<T(const Sequence<T>&)> recurrence,
-                 Cardinal cardinal = Cardinal::Infinity())
+                 SequenceLength cardinal = SequenceLength::Infinity())
         : length(cardinal), materialized(), generator(nullptr) {
         if (!recurrence) throw std::invalid_argument("recurrence is null");
         for (int i = 0; i < seed.GetSize(); ++i) {
@@ -126,7 +126,7 @@ public:
         return new LazySequence<T>(values);
     }
 
-    Cardinal GetLength() const {
+    SequenceLength GetLength() const {
         return length;
     }
 
@@ -151,7 +151,7 @@ public:
             return this;
         }
         materialized.Append(item);
-        length = Cardinal(length.Value() + 1);
+        length = SequenceLength(length.Value() + 1);
         return this;
     }
 
@@ -161,14 +161,14 @@ public:
         for (int index = 0; index < items->GetSize(); ++index) {
             materialized.Append(items->Get(index));
         }
-        length = Cardinal(length.Value() + static_cast<std::size_t>(items->GetSize()));
+        length = SequenceLength(length.Value() + static_cast<std::size_t>(items->GetSize()));
         return this;
     }
 
     LazySequence<T>* Prepend(T item) {
         materialized.Prepend(item);
         if (length.IsFinite()) {
-            length = Cardinal(length.Value() + 1);
+            length = SequenceLength(length.Value() + 1);
         }
         return this;
     }
@@ -179,7 +179,7 @@ public:
             materialized.Prepend(items->Get(index));
         }
         if (length.IsFinite()) {
-            length = Cardinal(length.Value() + static_cast<std::size_t>(items->GetSize()));
+            length = SequenceLength(length.Value() + static_cast<std::size_t>(items->GetSize()));
         }
         return this;
     }
@@ -195,7 +195,7 @@ public:
                 EnsureIndexMaterialized(ensureIndex);
             }
             materialized.InsertAt(index, item);
-            length = Cardinal(length.Value() + 1);
+            length = SequenceLength(length.Value() + 1);
             return this;
         }
 
@@ -226,7 +226,7 @@ public:
         }
         materialized = rebuilt;
         if (length.IsFinite()) {
-            length = Cardinal(length.Value() - 1);
+            length = SequenceLength(length.Value() - 1);
         }
         return this;
     }
@@ -251,9 +251,9 @@ public:
         auto second = std::make_shared<LazySequence<T>>(*list);
         ArraySequence<T> seed;
 
-        Cardinal resultLength = Cardinal::Infinity();
+        SequenceLength resultLength = SequenceLength::Infinity();
         if (first->GetLength().IsFinite() && second->GetLength().IsFinite()) {
-            resultLength = Cardinal(first->GetLength().Value() + second->GetLength().Value());
+            resultLength = SequenceLength(first->GetLength().Value() + second->GetLength().Value());
         }
 
         auto recurrence = [first, second](const Sequence<T>& prefix) -> T {
@@ -275,12 +275,12 @@ public:
         auto second = std::make_shared<LazySequence<U>>(*list);
         ArraySequence<std::pair<T, U>> seed;
 
-        Cardinal resultLength = Cardinal::Infinity();
+        SequenceLength resultLength = SequenceLength::Infinity();
         if (first->GetLength().IsFinite() && second->GetLength().IsFinite()) {
             std::size_t minLength = first->GetLength().Value() < second->GetLength().Value()
                 ? first->GetLength().Value()
                 : second->GetLength().Value();
-            resultLength = Cardinal(minLength);
+            resultLength = SequenceLength(minLength);
         }
 
         auto recurrence = [first, second](const Sequence<std::pair<T, U>>& prefix) -> std::pair<T, U> {
@@ -324,7 +324,7 @@ public:
                 if (predicate(value)) return value;
             }
         };
-        return new LazySequence<T>(seed, recurrence, Cardinal::Infinity());
+        return new LazySequence<T>(seed, recurrence, SequenceLength::Infinity());
     }
 
 private:

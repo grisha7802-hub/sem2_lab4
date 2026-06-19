@@ -13,7 +13,7 @@ private:
 public:
     Queue() : data(new ArraySequence<T>()) {}
 
-    explicit Queue(Sequence<T>* sequenceImplementation) : data(sequenceImplementation) {
+    Queue(Sequence<T>* sequenceImplementation) : data(sequenceImplementation) {
         if (data == nullptr) {
             throw std::invalid_argument("sequenceImplementation is null");
         }

@@ -329,7 +329,7 @@ int main() {
         [](const Sequence<int>& prefix) {
             return prefix.GetSize();
         },
-        Cardinal::Infinity()
+        SequenceLength::Infinity()
     );
 
     LazySequence<int>* infiniteEvens = naturals.Where(isEvenInt);
@@ -551,7 +551,7 @@ int main() {
         [](const Sequence<int>& prefix) {
             return prefix.GetSize();
         },
-        Cardinal::Infinity()
+        SequenceLength::Infinity()
     );
     auto firstHundredThousand = naturalStream.Take(100000);
     bool stressOk = firstHundredThousand.GetSize() == 100000

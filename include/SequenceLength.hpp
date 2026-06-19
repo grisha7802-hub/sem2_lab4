@@ -3,17 +3,17 @@
 #include <cstddef>
 #include <limits>
 
-class Cardinal {
+class SequenceLength {
 private:
     bool infinite;
     std::size_t finiteValue;
 
 public:
-    Cardinal() : infinite(false), finiteValue(0) {}
-    explicit Cardinal(std::size_t value) : infinite(false), finiteValue(value) {}
+    SequenceLength() : infinite(false), finiteValue(0) {}
+    SequenceLength(std::size_t value) : infinite(false), finiteValue(value) {}
 
-    static Cardinal Infinity() {
-        Cardinal c;
+    static SequenceLength Infinity() {
+        SequenceLength c;
         c.infinite = true;
         c.finiteValue = 0;
         return c;

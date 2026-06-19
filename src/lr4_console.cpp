@@ -49,7 +49,7 @@ int RunLr4Console() {
             int n = prefix.GetSize();
             return prefix.Get(n - 1) + prefix.Get(n - 2);
         },
-        Cardinal::Infinity()
+        SequenceLength::Infinity()
     );
 
     int finiteRaw[8] = {3, 1, 4, 1, 5, 9, 2, 6};

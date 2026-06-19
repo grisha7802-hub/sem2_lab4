@@ -42,7 +42,7 @@ private:
 
 public:
     Stream() : sequence(std::make_shared<LazySequence<T>>()) {}
-    explicit Stream(LazySequence<T>* seq) : sequence(seq) {
+    Stream(LazySequence<T>* seq) : sequence(seq) {
         if (seq == nullptr) throw std::invalid_argument("seq is null");
     }
 
@@ -56,7 +56,7 @@ public:
 
     static Stream<T> Recurrence(const Sequence<T>& seed,
                                 std::function<T(const Sequence<T>&)> recurrence,
-                                Cardinal cardinal = Cardinal::Infinity()) {
+                                SequenceLength cardinal = SequenceLength::Infinity()) {
         return Stream<T>(new LazySequence<T>(seed, recurrence, cardinal));
     }
 
@@ -115,14 +115,14 @@ public:
     ReadOnlyStream()
         : buffer(), position(0), opened(true), canSeek(true), filePath(), deserializer(nullptr) {}
 
-    explicit ReadOnlyStream(const Sequence<T>& source)
+    ReadOnlyStream(const Sequence<T>& source)
         : buffer(), position(0), opened(true), canSeek(true), filePath(), deserializer(nullptr) {
         for (int index = 0; index < source.GetSize(); ++index) {
             buffer.Append(source.Get(index));
         }
     }
 
-    explicit ReadOnlyStream(LazySequence<T>* source, std::size_t count)
+    ReadOnlyStream(LazySequence<T>* source, std::size_t count)
         : buffer(), position(0), opened(true), canSeek(true), filePath(), deserializer(nullptr) {
         if (source == nullptr) throw std::invalid_argument("source is null");
         for (std::size_t index = 0; index < count; ++index) {
@@ -130,7 +130,7 @@ public:
         }
     }
 
-    explicit ReadOnlyStream(const Stream<T>& source, std::size_t count)
+    ReadOnlyStream(const Stream<T>& source, std::size_t count)
         : ReadOnlyStream(&source.Source(), count) {}
 
     ReadOnlyStream(const std::string& text, std::function<T(const std::string&)> parse)
@@ -204,7 +204,7 @@ private:
     std::ofstream output;
 
 public:
-    explicit WriteOnlyStream(Sequence<T>* target)
+    WriteOnlyStream(Sequence<T>* target)
         : targetSequence(target), position(0), opened(true), filePath(), serializer(nullptr), output() {
         if (targetSequence == nullptr) throw std::invalid_argument("target is null");
     }

@@ -7,7 +7,7 @@ private:
     struct Node {
         T value;
         Node* next;
-        explicit Node(const T& nodeValue) : value(nodeValue), next(nullptr) {}
+        Node(const T& nodeValue) : value(nodeValue), next(nullptr) {}
     };
 
     Node* head;

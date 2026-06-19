@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
             int n = prefix.GetSize();
             return prefix.Get(n - 1) + prefix.Get(n - 2);
         },
-        Cardinal::Infinity()
+        SequenceLength::Infinity()
     );
 
     int finiteRaw[6] = {1, 2, 3, 4, 5, 6};

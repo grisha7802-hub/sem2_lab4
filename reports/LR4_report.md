@@ -110,7 +110,7 @@ GTK UI: ui/lr4_gtk_main.cpp
 
 1. Использовать Sequence<T> -> include/Sequence.hpp, ArraySequence<T>, ListSequence<T>.
 2. Реализовать LazySequence<T> -> include/LazySequence.hpp.
-3. Поддержать бесконечные последовательности -> Cardinal::Infinity(), recurrence-конструктор, тесты с натуральным рядом.
+3. Поддержать бесконечные последовательности -> SequenceLength::Infinity(), recurrence-конструктор, тесты с натуральным рядом.
 4. Мемоизация -> EnsureIndexMaterialized, GetMaterializedCount.
 5. Генератор -> Generator<T>, LazySequence::CreateGenerator().
 6. Append / Prepend / InsertAt -> реализованы для элемента и Sequence<T>.
