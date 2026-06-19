@@ -9,6 +9,7 @@
 #include "ArraySequence.hpp"
 #include "LazySequence.hpp"
 #include "OnlineStatistics.hpp"
+#include "Option.hpp"
 #include "Stream.hpp"
 
 static int addInt(int a, int b) { return a + b; }
@@ -29,6 +30,21 @@ struct TestStatistics {
     int passed = 0;
     int failed = 0;
     ArraySequence<std::string> failedCaseNames;
+};
+
+struct NoDefaultConstructor {
+    int value;
+
+    NoDefaultConstructor() = delete;
+
+    NoDefaultConstructor(int initialValue) : value(initialValue) {}
+
+    NoDefaultConstructor(const NoDefaultConstructor& other) : value(other.value) {}
+
+    NoDefaultConstructor& operator=(const NoDefaultConstructor& other) {
+        value = other.value;
+        return *this;
+    }
 };
 
 template<class T>
@@ -563,6 +579,18 @@ int main() {
            "size=100000 first=0 last=99999",
            stressOk ? "size=100000 first=0 last=99999" : "bad large stream",
            stressOk);
+
+    Option<NoDefaultConstructor> noneNoDefault = Option<NoDefaultConstructor>::None();
+    Option<NoDefaultConstructor> someNoDefault = Option<NoDefaultConstructor>::Some(NoDefaultConstructor(42));
+    bool optionNoDefaultOk = !noneNoDefault.IsSome()
+        && someNoDefault.IsSome()
+        && someNoDefault.GetOrThrow().value == 42;
+    Report(statistics,
+           "Option supports non-default-constructible type",
+           "Option<NoDefaultConstructor>::None(), Some(42)",
+           "None is empty, Some value=42",
+           optionNoDefaultOk ? "None is empty, Some value=42" : "bad Option state",
+           optionNoDefaultOk);
 
     std::cout << "===== TEST SUMMARY =====\n";
     std::cout << "Passed: " << statistics.passed << "\n";
