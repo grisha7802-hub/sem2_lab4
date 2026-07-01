@@ -20,7 +20,8 @@ target_link_libraries(lr3_tests PRIVATE lr3_core)
 add_executable(lr3_queue_tests tests/queue_tests.cpp)
 target_link_libraries(lr3_queue_tests PRIVATE lr3_core)
 
-add_executable(lr3_bench src/benchmark.cpp)
+add_executable(lr3_bench src/benchmark.cpp
+        include/Stream.hpp)
 target_link_libraries(lr3_bench PRIVATE lr3_core)
 
 add_executable(lr3_queue_bench src/queue_benchmark.cpp)
