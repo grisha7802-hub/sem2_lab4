@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 
+#include "ArraySequenceMonad.hpp"
 #include "ArraySequence.hpp"
 #include "Either.hpp"
 #include "LazySequence.hpp"
@@ -18,6 +19,12 @@ static int squareInt(int x) { return x * x; }
 static int doubleInt(int x) { return x * 2; }
 static bool isEvenInt(int x) { return x % 2 == 0; }
 static bool isGreaterThanTenInt(int x) { return x > 10; }
+static ArraySequence<int> duplicateAndMultiplyInt(const int& value) {
+    ArraySequence<int> result;
+    result.Append(value);
+    result.Append(value * 10);
+    return result;
+}
 static int parseInt(const std::string& value) {
     try {
         return std::stoi(value);
@@ -637,6 +644,28 @@ int main() {
                  "Left(\"parse error\").GetRightOrThrow()",
                  "Either is Left",
                  [&leftEither]() { leftEither.GetRightOrThrow(); });
+
+    auto monadSingle = ArraySequenceMonad<int>::Return(5);
+    int expectedMonadSingle[1] = {5};
+    Report(statistics,
+           "ArraySequenceMonad Return wraps value",
+           "Return(5)",
+           "[5]",
+           SequenceToString(monadSingle),
+           SequenceEqualsArray(monadSingle, expectedMonadSingle, 1));
+
+    ArraySequence<int> monadSource;
+    monadSource.Append(1);
+    monadSource.Append(2);
+    monadSource.Append(3);
+    auto monadBound = ArraySequenceMonad<int>::Bind<int>(monadSource, duplicateAndMultiplyInt);
+    int expectedMonadBound[6] = {1, 10, 2, 20, 3, 30};
+    Report(statistics,
+           "ArraySequenceMonad Bind maps and flattens",
+           "[1, 2, 3], value -> [value, value * 10]",
+           "[1, 10, 2, 20, 3, 30]",
+           SequenceToString(monadBound),
+           SequenceEqualsArray(monadBound, expectedMonadBound, 6));
 
     std::cout << "===== TEST SUMMARY =====\n";
     std::cout << "Passed: " << statistics.passed << "\n";
