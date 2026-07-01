@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "ArraySequence.hpp"
+#include "Either.hpp"
 #include "LazySequence.hpp"
 #include "OnlineStatistics.hpp"
 #include "Option.hpp"
@@ -591,6 +592,51 @@ int main() {
            "None is empty, Some value=42",
            optionNoDefaultOk ? "None is empty, Some value=42" : "bad Option state",
            optionNoDefaultOk);
+
+    auto leftEither = Either<std::string, int>::Left("parse error");
+    auto rightEither = Either<std::string, int>::Right(123);
+    bool eitherBasicOk = leftEither.IsLeft()
+        && !leftEither.IsRight()
+        && leftEither.GetLeftOrThrow() == "parse error"
+        && rightEither.IsRight()
+        && !rightEither.IsLeft()
+        && rightEither.GetRightOrThrow() == 123
+        && rightEither.GetLeftOr("fallback") == "fallback"
+        && leftEither.GetRightOr(-1) == -1;
+    Report(statistics,
+           "Either stores left and right values",
+           "Left(\"parse error\"), Right(123)",
+           "left error, right 123, fallbacks work",
+           eitherBasicOk ? "left error, right 123, fallbacks work" : "bad Either state",
+           eitherBasicOk);
+
+    Either<std::string, NoDefaultConstructor> noDefaultEither =
+        Either<std::string, NoDefaultConstructor>::Right(NoDefaultConstructor(77));
+    Either<std::string, NoDefaultConstructor> copiedEither = noDefaultEither;
+    bool eitherNoDefaultOk = copiedEither.IsRight()
+        && copiedEither.GetRightOrThrow().value == 77;
+    Report(statistics,
+           "Either supports non-default-constructible right type",
+           "Either<string, NoDefaultConstructor>::Right(77), copy",
+           "Right value=77",
+           eitherNoDefaultOk ? "Right value=77" : "bad Either copy",
+           eitherNoDefaultOk);
+
+    auto sameTypeEither = Either<int, int>::Left(10);
+    bool eitherSameTypeOk = sameTypeEither.IsLeft()
+        && sameTypeEither.GetLeftOrThrow() == 10;
+    Report(statistics,
+           "Either supports same left and right types",
+           "Either<int, int>::Left(10)",
+           "Left value=10",
+           eitherSameTypeOk ? "Left value=10" : "bad Either<int, int>",
+           eitherSameTypeOk);
+
+    ReportThrows(statistics,
+                 "Either rejects wrong side access",
+                 "Left(\"parse error\").GetRightOrThrow()",
+                 "Either is Left",
+                 [&leftEither]() { leftEither.GetRightOrThrow(); });
 
     std::cout << "===== TEST SUMMARY =====\n";
     std::cout << "Passed: " << statistics.passed << "\n";
